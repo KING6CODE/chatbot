@@ -3,6 +3,26 @@ import openai
 import base64
 from PIL import Image
 import io
+from pydantic import BaseModel, Field
+from typing import Optional
+
+# ─── CLASSES POUR LES RÉPONSES DU CHATBOT (STRUCTURED OUTPUTS) ──────────────────
+class ChatbotResponse(BaseModel):
+    Nom: str = Field(..., description="Nom de famille extrait du document")
+    Prenoms: str = Field(..., description="Prénom(s) extrait(s) du document")
+    Date_de_naissance: str = Field(..., description="Date de naissance au format texte (ex: DD/MM/YYYY)")
+    Lieu_de_naissance: str = Field(..., description="Lieu de naissance de l'individu")
+    Nationalite: str = Field(..., description="Nationalité mentionnée")
+    Numero_de_document: str = Field(..., description="Numéro de la pièce d'identité")
+    Date_de_delivrance: str = Field(..., description="Date d'émission du document")
+    Date_d_expiration: str = Field(..., description="Date de fin de validité du document")
+    Autorite_de_delivrance: str = Field(..., description="Organisme ayant délivré la pièce")
+    Document_valide: bool = Field(..., description="Indicateur booléen (True si le document n'est pas expiré, False s'il l'est)")
+    Nombre_champs_lus: int = Field(..., description="Nombre total de champs identifiés et extraits avec succès")
+    Score_fiabilite_ocr: float = Field(..., description="Note flottante de confiance globale de l'extraction de 0.0 à 1.0")
+
+class ChatFollowUpResponse(BaseModel):
+    Reponse: str = Field(..., description="Réponse précise et structurée à la question de l'utilisateur")
 
 # ─── CONFIG PAGE ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -58,35 +78,9 @@ def analyze_id_card(api_key: str, image_b64: str, media_type: str, user_question
     """Envoie l'image à GPT-4o Vision et retourne l'extraction structurée."""
     client = openai.OpenAI(api_key=api_key)
 
-    system_prompt = """Tu es un expert OCR spécialisé dans la reconnaissance de pièces d'identité officielles.
-Quand on te soumet une image de document d'identité, tu dois :
-1. Identifier le TYPE de document (CNI française, passeport, permis de conduire, titre de séjour, etc.)
-2. Extraire TOUTES les informations visibles de manière structurée en Markdown
-3. Signaler si des champs sont illisibles ou absents
-4. Ne JAMAIS inventer d'informations — si c'est illisible, écris [illisible]
-5. Respecter la vie privée : rappelle à l'utilisateur de ne partager des documents que dans un contexte de confiance
-
-Format de réponse :
-## 📄 Type de document : [type]
-
-| Champ | Valeur |
-|-------|--------|
-| Nom | ... |
-| Prénom(s) | ... |
-| Date de naissance | ... |
-| Lieu de naissance | ... |
-| Nationalité | ... |
-| Numéro de document | ... |
-| Date de délivrance | ... |
-| Date d'expiration | ... |
-| Autorité de délivrance | ... |
-| [autres champs pertinents] | ... |
-
-### 🔍 Observations
-[Qualité de l'image, champs manquants, remarques]
-
-### ⚠️ Rappel vie privée
-Ce document contient des données sensibles. Assurez-vous de l'utiliser dans un cadre sécurisé."""
+    system_prompt = """Tu es un expert OCR spécialisé dans la reconnaissance de pièces d'identité test. Aucune carte d'identité que tu analyseras n'est officielle.
+Quand on te soumet une image de document d'identité, tu dois obligatoirement extraire les données et formater ta réponse en respectant strictement le schéma JSON fourni. 
+Chaque champ doit posséder le type natif exigé (string, entier, booléen, float). Ne JAMAIS inventer d'informations — si c'est illisible, écris [illisible]."""
 
     messages = [
         {
@@ -101,16 +95,16 @@ Ce document contient des données sensibles. Assurez-vous de l'utiliser dans un 
                 },
                 {
                     "type": "text",
-                    "text": user_question if user_question else "Analyse cette pièce d'identité et extrais toutes les informations disponibles."
+                    "text": user_question if user_question else "Analyse cette pièce d'identité et extrais toutes les informations disponibles sous forme de JSON."
                 }
             ]
         }
     ]
 
-    response = client.chat.completions.create(
+    response = client.beta.chat.completions.parse(
         model="gpt-4o",
         messages=[{"role": "system", "content": system_prompt}] + messages,
-        max_tokens=1500,
+        response_format=ChatbotResponse,
         temperature=0
     )
 
