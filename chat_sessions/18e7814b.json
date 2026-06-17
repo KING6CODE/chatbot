@@ -1,0 +1,28 @@
+{
+  "id": "18e7814b",
+  "title": "Analyse PERMIS",
+  "created_at": "17/06/2026 11:38",
+  "doc_type": "PERMIS",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "🤖 **Agent 1 — Classification terminée**\n\n```json\n{\n  \"type_document\": \"Permis de conduire 🚗\",\n  \"pays_emission\": \"France\",\n  \"langue_document\": \"Français\",\n  \"confiance_classification\": 1.0,\n  \"justification\": \"Le document est intitulé 'Permis de Conduire' et porte les mentions 'République Française', ce qui indique qu'il s'agit d'un permis de conduire émis en France.\"\n}\n```\n\n🔬 **Agent 2** prend le relais avec le schéma **Permis de conduire 🚗**..."
+    },
+    {
+      "role": "user",
+      "content": "📎 *[Document uploadé pour analyse]*"
+    },
+    {
+      "role": "assistant",
+      "content": "🔬 **Agent 2 — Extraction Permis de conduire 🚗 terminée**\n\n```json\n{\"Nom\":\"RICHARD\",\"Prenoms\":\"Johanna\",\"Date_de_naissance\":\"29.11.1992\",\"Lieu_de_naissance\":\"Paris 075\",\"Numero_de_document\":\"13AA00002\",\"Date_de_delivrance\":\"16.09.2013\",\"Date_d_expiration\":\"01.01.2014\",\"Autorite_de_delivrance\":\"75000 Paris\",\"Categories\":\"A/A1/B1/B/BE\",\"Restrictions\":\"[aucune]\",\"Adresse\":\"[non présent]\",\"Document_valide\":false,\"Nombre_champs_lus\":12,\"Score_fiabilite_ocr\":0.99}\n```"
+    }
+  ],
+  "extracted_data": "{\"Nom\":\"RICHARD\",\"Prenoms\":\"Johanna\",\"Date_de_naissance\":\"29.11.1992\",\"Lieu_de_naissance\":\"Paris 075\",\"Numero_de_document\":\"13AA00002\",\"Date_de_delivrance\":\"16.09.2013\",\"Date_d_expiration\":\"01.01.2014\",\"Autorite_de_delivrance\":\"75000 Paris\",\"Categories\":\"A/A1/B1/B/BE\",\"Restrictions\":\"[aucune]\",\"Adresse\":\"[non présent]\",\"Document_valide\":false,\"Nombre_champs_lus\":12,\"Score_fiabilite_ocr\":0.99}",
+  "classification": {
+    "type_document": "PERMIS",
+    "pays_emission": "France",
+    "langue_document": "Français",
+    "confiance_classification": 1.0,
+    "justification": "Le document est intitulé 'Permis de Conduire' et porte les mentions 'République Française', ce qui indique qu'il s'agit d'un permis de conduire émis en France."
+  }
+}
