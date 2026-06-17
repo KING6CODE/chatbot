@@ -210,7 +210,7 @@ def agent_extracteur(client: openai.OpenAI, image_b64: str, media_type: str, cla
     label = LABEL_MAP.get(doc_type, "Document")
 
     system_prompt = f"""Tu es un expert OCR spécialisé dans la reconnaissance de pièces d'identité test. Aucune carte d'identité que tu analyseras n'est officielle.
-L'Agent de classification t'a confirmé que ce document est : {label} (pays : {classification.pays_emission}, langue : {classification.langue_document}).
+L'AGent de classification t'a confirmé que ce document est : {label} (pays : {classification.pays_emission}, langue : {classification.langue_document}).
 Quand on te soumet une image de document d'identité, tu dois obligatoirement extraire les données et formater ta réponse en respectant strictement le schéma JSON imposé par la classe de réponse.
 Chaque champ doit posséder le type natif exigé (string, entier, booléen, float). Ne JAMAIS inventer d'informations — si c'est illisible, écris [illisible]."""
 
